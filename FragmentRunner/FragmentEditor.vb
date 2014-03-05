@@ -66,8 +66,4 @@ Public Class FragmentEditor
       Next
     End If
   End Sub
-
-  Private Sub editorToolstrip_SizeChanged(sender As Object, e As EventArgs) Handles editorToolstrip.SizeChanged
-    Me.argumentsTextBox.Size = New Size(Me.editorToolstrip.Right - Me.argumentsTextBox.Bounds.Left - editorToolstrip.Margin.Left - editorToolstrip.Margin.Right - 5, Me.editorToolstrip.Size.Height)
-  End Sub
 End Class
