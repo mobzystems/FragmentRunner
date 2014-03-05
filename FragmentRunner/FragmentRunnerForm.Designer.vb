@@ -84,7 +84,7 @@ Partial Class FragmentRunnerForm
     Me.Controls.Add(Me.ToolStrip1)
     Me.KeyPreview = True
     Me.Name = "FragmentRunnerForm"
-    Me.Text = "Fragment Runner"
+    Me.Text = "Fragment Runner by MOBZystems"
     Me.ToolStrip1.ResumeLayout(False)
     Me.ToolStrip1.PerformLayout()
     Me.ResumeLayout(False)
