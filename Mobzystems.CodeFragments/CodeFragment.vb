@@ -61,10 +61,12 @@ Namespace Global.Mobzystems.CodeFragments
     ''' <summary>
     ''' Run the fragment. Return whatever object the Main() method in the fragment returns
     ''' </summary>
+    ''' <param name="arguments">An array of strings to pass to Main, or Nothing</param>
+    ''' <param name="outputWriter">An action to be called on output using Print() and PrintLine()</param>
     ''' <remarks>
     ''' The output of the fragment (using Print() and PrintLine()) are available in the Output property
     ''' </remarks>
-    Public Function Run(outputWriter As Action(Of String), arguments() As String) As Object
+    Public Function Run(Optional arguments() As String = Nothing, Optional outputWriter As Action(Of String) = Nothing) As Object
       ' Get the assembly the fragment is in
       Dim a As Assembly = Me._results.CompiledAssembly
       ' Get the main type in the assembly

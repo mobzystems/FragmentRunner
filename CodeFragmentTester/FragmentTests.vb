@@ -4,7 +4,7 @@ Option Infer Off
 
 Imports Mobzystems.CodeFragments
 
-Module Module1
+Module FragmentTests
 
   Sub Main()
     ' Create a compiler for C#. Also supports VB.NET and JScript
@@ -22,13 +22,13 @@ Module Module1
     ' If compiling succeeded, run the fragment three times and display the result
     If c.Succeeded Then
       '--> "Nothing to do!"
-      Console.WriteLine(c.Run(Nothing, Nothing))
+      Console.WriteLine(c.Run())
       Console.Write(c.Output)
       ' --> "and a one"
-      Console.WriteLine(c.Run(Nothing, New String() {"and a one"}))
+      Console.WriteLine(c.Run(New String() {"and a one"}))
       Console.Write(c.Output)
       ' --> "2"
-      Console.WriteLine(c.Run(Nothing, New String() {"one", "two"}))
+      Console.WriteLine(c.Run(New String() {"one", "two"}))
       Console.Write(c.Output)
     Else
       ' On errors, dump the first error

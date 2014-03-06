@@ -44,11 +44,11 @@ Public Class FragmentEditor
         End If
 
         Dim retVal As Object = s.Run(
+          arguments,
           Sub(output)
             Me.outputTextBox.Text += output
             Me.outputTextBox.Select(Me.outputTextBox.Text.Length, 0)
-          End Sub,
-          arguments
+          End Sub
         )
         If retVal IsNot Nothing Then
           Me.outputTextBox.Text += String.Format("--- Return value was {0}", retVal) + vbCrLf
