@@ -54,7 +54,7 @@ Partial Class FragmentRunnerForm
     'languageList
     '
     Me.languageList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-    Me.languageList.Items.AddRange(New Object() {"C#", "VB.NET", "JScript"})
+    Me.languageList.Items.AddRange(New Object() {"C#", "VB.NET", "JScript", "C++"})
     Me.languageList.Name = "languageList"
     Me.languageList.Size = New System.Drawing.Size(121, 25)
     '

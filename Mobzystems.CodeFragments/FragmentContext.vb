@@ -3,38 +3,10 @@ Option Explicit On
 Option Infer Off
 
 Namespace Global.Mobzystems.CodeFragments
-  ' ''' <summary>
-  ' ''' Event argument class for the OutputWritten event
-  ' ''' </summary>
-  ' ''' <remarks></remarks>
-  'Public Class OutputWrittenEventArgs
-  '  Inherits EventArgs
-
-  '  ''' <summary>
-  '  ''' The actual output
-  '  ''' </summary>
-  '  Protected _output As String
-
-  '  ''' <summary>
-  '  ''' The string that should was sent to output
-  '  ''' </summary>
-  '  Public ReadOnly Property Output As String
-  '    Get
-  '      Return Me._output
-  '    End Get
-  '  End Property
-
-  '  ''' <summary>
-  '  ''' Constructor with an output string
-  '  ''' </summary>
-  '  Protected Friend Sub New(s As String)
-  '    Me._output = s
-  '  End Sub
-  'End Class
-
   ''' <summary>
   ''' The execution context of a fragment. 
-  ''' Abstract, because a compiled code fragment will inherit from this class and supply a Main method
+  ''' Abstract, because a compiled code fragment will inherit from this class and supply a Main method.
+  ''' Therefore, this class must be Public!
   ''' </summary>
   Public MustInherit Class FragmentContext
     Protected _outputWriter As Action(Of String)
@@ -94,8 +66,14 @@ Namespace Global.Mobzystems.CodeFragments
     ''' <summary>
     ''' Output a string to the context
     ''' </summary>
-    ''' <remarks>Simply forwards the output to the Output method of the fragment</remarks>
+    ''' <remarks>
+    ''' Simply forwards the output to the Output method of the fragment,
+    ''' unless there is no output writer
+    ''' </remarks>
     Protected Sub Output(s As String)
+      If _outputWriter Is Nothing Then
+        Throw New InvalidOperationException("The string '" + s + "' was written to output using Print() or PrintLine(), but Run() was called with a null OutputWriter")
+      End If
       Me._outputWriter(s)
     End Sub
 

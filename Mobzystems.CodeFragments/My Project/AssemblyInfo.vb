@@ -8,17 +8,17 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("MOBZystems Fragment Runner")> 
-<Assembly: AssemblyDescription("A simple .NET fragment compiler and runner")> 
+<Assembly: AssemblyTitle("Mobzystems.CodeFragments")> 
+<Assembly: AssemblyDescription("Code fragment compiler")> 
 <Assembly: AssemblyCompany("MOBZystems BV, Amsterdam")> 
-<Assembly: AssemblyProduct("Fragment Runner")> 
+<Assembly: AssemblyProduct("Mobzystems.CodeFragments")> 
 <Assembly: AssemblyCopyright("Copyright © 2014, MOBZystems BV")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>
 
 'The following GUID is for the ID of the typelib if this project is exposed to COM
-<Assembly: Guid("deeaaa85-5559-4c44-ad4a-77aab567cf06")> 
+<Assembly: Guid("f1fdea7c-18a5-4f36-8b9f-d7ac6190673f")> 
 
 ' Version information for an assembly consists of the following four values:
 '
@@ -32,4 +32,4 @@ Imports System.Runtime.InteropServices
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
 <Assembly: AssemblyVersion("0.0.9.0")> 
-<Assembly: AssemblyFileVersion("0.0.9.0")> 
+<Assembly: AssemblyFileVersion("1.0.9.0")> 

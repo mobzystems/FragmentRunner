@@ -3,8 +3,11 @@ Option Explicit On
 Option Infer Off
 
 Imports System.CodeDom.Compiler
+Imports Mobzystems.CodeFragments
 
 Public Class FragmentRunnerForm
+  Protected _avaliableLanguages As New List(Of FragmentCompiler.LanguageInfo)
+
   Private Sub runButton_Click(sender As Object, e As EventArgs) Handles runButton.Click
     If Me.mainTabControl.SelectedTab Is Nothing Then
       MessageBox.Show(Me, "Create a new fragment first!", "No fragment to run", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
@@ -22,27 +25,20 @@ Public Class FragmentRunnerForm
   Public Sub New()
     InitializeComponent()
 
-    Me.languageList.SelectedIndex = 0
+    Me.languageList.Items.Clear()
 
-    Me.CreateNewEditor("C#", New CSharpFragmentCompiler())
-    Me.CreateNewEditor("VB.NET", New VisualBasicFragmentCompiler())
-    Me.CreateNewEditor("JScript", New JScriptFragmentCompiler())
+    For Each li As FragmentCompiler.LanguageInfo In FragmentCompiler.GetLanguages()
+      If li.IsValid Then
+        Me.languageList.Items.Add(li.DisplayName)
+        Me._avaliableLanguages.Add(li)
+        CreateNewEditor(li.DisplayName, li.CreateCompiler())
+      End If
+    Next
+
+    Me.languageList.SelectedIndex = 0
 
     Me.mainTabControl.SelectedIndex = 0
   End Sub
-
-  Protected Function GetCurrentCompiler() As FragmentCompiler
-    Select Case Me.languageList.SelectedIndex
-      Case 0
-        Return New CSharpFragmentCompiler
-      Case 1
-        Return New VisualBasicFragmentCompiler
-      Case 2
-        Return New JScriptFragmentCompiler
-      Case Else
-        Throw New Exception("Unknown language")
-    End Select
-  End Function
 
   Protected Sub CreateNewEditor(title As String, compiler As FragmentCompiler)
     Dim page As New TabPage
@@ -60,7 +56,7 @@ Public Class FragmentRunnerForm
   End Sub
 
   Private Sub newFragmentButton_Click(sender As Object, e As EventArgs) Handles newFragmentButton.Click
-    CreateNewEditor(Me.languageList.Text, GetCurrentCompiler())
+    CreateNewEditor(Me.languageList.Text, Me._avaliableLanguages(Me.languageList.SelectedIndex).CreateCompiler())
   End Sub
 
   Private Sub FragmentRunnerForm_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown

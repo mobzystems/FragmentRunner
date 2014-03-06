@@ -74,7 +74,7 @@ Namespace Global.Mobzystems.CodeFragments
           Nothing,
           o,
           New Object() {
-            arguments
+            If(arguments, New String() {})
           }
         )
       Catch ex As Exception
