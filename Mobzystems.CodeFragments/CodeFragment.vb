@@ -20,6 +20,8 @@ Namespace Global.Mobzystems.CodeFragments
     ''' </summary>
     Protected _firstsourceLineNumber As Integer
 
+    Protected _lastOutput As String
+
     ''' <summary>
     ''' Constructor for a new fragment
     ''' </summary>
@@ -59,16 +61,20 @@ Namespace Global.Mobzystems.CodeFragments
     ''' <summary>
     ''' Run the fragment. Return whatever object the Main() method in the fragment returns
     ''' </summary>
+    ''' <remarks>
+    ''' The output of the fragment (using Print() and PrintLine()) are available in the Output property
+    ''' </remarks>
     Public Function Run(outputWriter As Action(Of String), arguments() As String) As Object
       ' Get the assembly the fragment is in
       Dim a As Assembly = Me._results.CompiledAssembly
       ' Get the main type in the assembly
       Dim t As Type = a.GetType("Fragment.Program")
       ' Create an instance of the type
-      Dim o As Object = Activator.CreateInstance(t, outputWriter)
+      Dim o As FragmentContext = DirectCast(Activator.CreateInstance(t, outputWriter), FragmentContext)
+
       ' Call the MainEntry method on the object, supplying a new fragment context
       Try
-        Return t.InvokeMember(
+        Dim returnValue As Object = t.InvokeMember(
           "FragmentMain",
           BindingFlags.InvokeMethod,
           Nothing,
@@ -77,9 +83,20 @@ Namespace Global.Mobzystems.CodeFragments
             If(arguments, New String() {})
           }
         )
+        Me._lastOutput = o.GetFinalOutput()
+        Return returnValue
       Catch ex As Exception
         Throw New Exception("Fragment execution failed: " + ex.Message, ex)
       End Try
     End Function
+
+    ''' <summary>
+    ''' Get the output of the most recent Run() of this fragment
+    ''' </summary>
+    Public ReadOnly Property Output As String
+      Get
+        Return Me._lastOutput
+      End Get
+    End Property
   End Class
 End Namespace
