@@ -21,13 +21,13 @@ Module FragmentTests
 
     ' If compiling succeeded, run the fragment three times and display the result
     If c.Succeeded Then
-      '--> "Nothing to do!"
+      ' No arguments --> "Nothing to do!"
       Console.WriteLine(c.Run())
       Console.Write(c.Output)
-      ' --> "and a one"
+      ' A single argument --> "and a one"
       Console.WriteLine(c.Run(New String() {"and a one"}))
       Console.Write(c.Output)
-      ' --> "2"
+      ' More than 1 argument --> "2"
       Console.WriteLine(c.Run(New String() {"one", "two"}))
       Console.Write(c.Output)
     Else
