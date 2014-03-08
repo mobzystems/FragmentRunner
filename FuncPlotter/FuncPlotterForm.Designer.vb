@@ -23,6 +23,7 @@ Partial Class FuncPlotterForm
   <System.Diagnostics.DebuggerStepThrough()> _
   Private Sub InitializeComponent()
     Me.Panel1 = New System.Windows.Forms.Panel()
+    Me.fillCheckBox = New System.Windows.Forms.CheckBox()
     Me.plotButton = New System.Windows.Forms.Button()
     Me.functionTextBox = New System.Windows.Forms.TextBox()
     Me.plotPictureBox = New System.Windows.Forms.PictureBox()
@@ -32,6 +33,7 @@ Partial Class FuncPlotterForm
     '
     'Panel1
     '
+    Me.Panel1.Controls.Add(Me.fillCheckBox)
     Me.Panel1.Controls.Add(Me.plotButton)
     Me.Panel1.Controls.Add(Me.functionTextBox)
     Me.Panel1.Dock = System.Windows.Forms.DockStyle.Top
@@ -41,10 +43,20 @@ Partial Class FuncPlotterForm
     Me.Panel1.Size = New System.Drawing.Size(1068, 63)
     Me.Panel1.TabIndex = 0
     '
+    'fillCheckBox
+    '
+    Me.fillCheckBox.AutoSize = True
+    Me.fillCheckBox.Location = New System.Drawing.Point(13, 39)
+    Me.fillCheckBox.Name = "fillCheckBox"
+    Me.fillCheckBox.Size = New System.Drawing.Size(42, 21)
+    Me.fillCheckBox.TabIndex = 2
+    Me.fillCheckBox.Text = "Fill"
+    Me.fillCheckBox.UseVisualStyleBackColor = True
+    '
     'plotButton
     '
     Me.plotButton.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-    Me.plotButton.Location = New System.Drawing.Point(967, 15)
+    Me.plotButton.Location = New System.Drawing.Point(976, 4)
     Me.plotButton.Margin = New System.Windows.Forms.Padding(4)
     Me.plotButton.Name = "plotButton"
     Me.plotButton.Size = New System.Drawing.Size(88, 30)
@@ -52,29 +64,29 @@ Partial Class FuncPlotterForm
     Me.plotButton.Text = "Plot"
     Me.plotButton.UseVisualStyleBackColor = True
     '
-    'TextBox1
+    'functionTextBox
     '
     Me.functionTextBox.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-    Me.functionTextBox.Location = New System.Drawing.Point(15, 17)
+    Me.functionTextBox.Location = New System.Drawing.Point(13, 8)
     Me.functionTextBox.Margin = New System.Windows.Forms.Padding(4)
-    Me.functionTextBox.Name = "TextBox1"
-    Me.functionTextBox.Size = New System.Drawing.Size(945, 25)
+    Me.functionTextBox.Name = "functionTextBox"
+    Me.functionTextBox.Size = New System.Drawing.Size(955, 25)
     Me.functionTextBox.TabIndex = 0
     Me.functionTextBox.Text = "Math.Sin(x*Math.PI)*Math.Sin(y*Math.PI)"
     '
-    'PictureBox1
+    'plotPictureBox
     '
     Me.plotPictureBox.BackColor = System.Drawing.Color.Black
     Me.plotPictureBox.Dock = System.Windows.Forms.DockStyle.Fill
     Me.plotPictureBox.Location = New System.Drawing.Point(0, 63)
     Me.plotPictureBox.Margin = New System.Windows.Forms.Padding(4)
-    Me.plotPictureBox.Name = "PictureBox1"
+    Me.plotPictureBox.Name = "plotPictureBox"
     Me.plotPictureBox.Size = New System.Drawing.Size(1068, 651)
     Me.plotPictureBox.TabIndex = 1
     Me.plotPictureBox.TabStop = False
     '
-    'Form1
+    'FuncPlotterForm
     '
     Me.AcceptButton = Me.plotButton
     Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 17.0!)
@@ -84,7 +96,7 @@ Partial Class FuncPlotterForm
     Me.Controls.Add(Me.Panel1)
     Me.Font = New System.Drawing.Font("Segoe UI Symbol", 9.75!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
     Me.Margin = New System.Windows.Forms.Padding(4)
-    Me.Name = "Form1"
+    Me.Name = "FuncPlotterForm"
     Me.Text = "Mobzystems.CodeFragments Function Plotter"
     Me.Panel1.ResumeLayout(False)
     Me.Panel1.PerformLayout()
@@ -96,5 +108,6 @@ Partial Class FuncPlotterForm
   Friend WithEvents plotButton As System.Windows.Forms.Button
   Friend WithEvents functionTextBox As System.Windows.Forms.TextBox
   Friend WithEvents plotPictureBox As System.Windows.Forms.PictureBox
+  Friend WithEvents fillCheckBox As System.Windows.Forms.CheckBox
 
 End Class
