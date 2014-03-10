@@ -6,11 +6,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{AD1001F8-AB4E-47D3-A03B-9E7B364DCED2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>FuncPlotter.My.MyApplication</StartupObject>
+    <StartupObject>FuncPlotter.FuncPlotterForm</StartupObject>
     <RootNamespace>FuncPlotter</RootNamespace>
     <AssemblyName>FuncPlotter</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MyType>WindowsForms</MyType>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>

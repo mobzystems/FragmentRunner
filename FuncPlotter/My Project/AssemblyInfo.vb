@@ -9,10 +9,10 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("FuncPlotter")> 
-<Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("")> 
-<Assembly: AssemblyProduct("FuncPlotter")> 
-<Assembly: AssemblyCopyright("Copyright ©  2014")> 
+<Assembly: AssemblyDescription("Demo application for Mobzystems.CodeFragments")> 
+<Assembly: AssemblyCompany("MOBZystems, Amsterdam")> 
+<Assembly: AssemblyProduct("Mobzystems.CodeFragments")> 
+<Assembly: AssemblyCopyright("Copyright © 2014, MOBZystems")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>
@@ -31,5 +31,5 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("1.0.0.0")> 
-<Assembly: AssemblyFileVersion("1.0.0.0")> 
+<Assembly: AssemblyVersion("0.9.0.0")> 
+<Assembly: AssemblyFileVersion("0.9.0.0")> 
