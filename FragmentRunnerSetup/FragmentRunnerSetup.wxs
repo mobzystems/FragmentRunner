@@ -34,16 +34,35 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
   <Product Name="$(var.PRODUCTNAME) $(var.VERSION)" Id="$(var.PRODUCTCODE)" UpgradeCode="$(var.UPGRADECODE)" Language="1033" Version="$(var.VERSION)" Manufacturer="$(var.MANUFACTURER)">
     <!-- Set Compressed to 'no' to store installation structure next to MSI file -->
-    <Package Description="DESC $(var.PRODUCTNAME) $(var.VERSION)" InstallerVersion="200" Languages="1033" Compressed="no" InstallScope="perMachine" />
+    <Package Description="DESC $(var.PRODUCTNAME) $(var.VERSION)" InstallerVersion="200" Languages="1033" Compressed="yes" InstallScope="perMachine" />
+
+    <Property Id="ARPCOMMENTS" Value="(c) 2014 - MOBZystems BV, Amsterdam" />
+    <Property Id="ARPCONTACT" Value="contact@mobzystems.com" />
+    <Property Id="ARPPRODUCTICON" Value="MOBZystems.FragmentRunner.exe" />
+    <Property Id="ARPHELPLINK" Value="http://www.mobzystems.com" />
+    <!--<Property Id="ARPREADME" Value="Your README link" />
+    <Property Id="ARPURLINFOABOUT" Value="Your &apos;About&apos; information" />
+    <Property Id="ARPURLUPDATEINFO" Value="Your &apos;Update&apos; URL" />
+    <Property Id="ARPHELPTELEPHONE" Value="URL where users can find your support phone number" />
+    <Property Id="ARPAUTHORIZEDCDFPREFIX" Value="URL of the update channel for the application" />
+    <Property Id="ARPSIZE" Value="3" />-->
 
     <!-- Upgrade policy: no downgrades, consider x.y.z.R1 equal to x.y.z.R2 (e.g. ignore revisions) -->
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="no"/>
     <MediaTemplate CabinetTemplate="cab{0}.cab" EmbedCab="yes"/>
 
+    <!-- Set variables -->
+    <?define FragmentRunner.ShortcutName="MOBZystems Fragment Runner"?>
+    <?define FragmentRunner.ShortcutDescription="Fragment Runner Main App"?>
+    <?define FuncPlotter.ShortcutName="Function Plotter"?>
+    <?define FuncPlotter.ShortcutDescription="Function Plotter Example Program"?>
+    <?define CodeFragmentTester.ShortcutName="Code Fragment Tester"?>
+    <?define CodeFragmentTester.ShortcutDescription="Code Fragment Tester Example Program"?>
+
     <!-- Include our dependencies -->
-    <?include wxi\FuncPlotter.Shortcut.wxi?>
-    <?include wxi\FragmentRunner.Shortcut.wxi?>
-    <?include wxi\CodeFragmentTester.Shortcut.wxi?>
+    <?include wxi\FuncPlotter.Output.wxi?>
+    <?include wxi\FragmentRunner.Output.wxi?>
+    <?include wxi\CodeFragmentTester.Output.wxi?>
     <?include wxi\Mobzystems.CodeFragments.Output.wxi?>
 
     <!--
@@ -80,7 +99,8 @@
       <!-- Program (= Start) menu folder structure -->
 
       <Directory Id="ProgramMenuFolder">
-        <Directory Id="FragmentRunner.ShortcutFolder" />
+        <!-- The main shortcut goes into the start menu - others are hidden by putting them in ProgramFiles -->
+        <Directory Id="FragmentRunner.Shortcut" />
         <!--<Directory Id="ProgramMenuManufacturerFolder" Name="$(var.MANUFACTURER)">-->
         <Directory Id="ProgramMenuAppFolder" Name="$(var.PRODUCTNAME)" />
         <!--</Directory>-->
@@ -89,43 +109,36 @@
 
     <!--  Contents of the installation directory (in ProgramFiles)-->
     <DirectoryRef Id="ProgramFilesAppFolder">
-      <!-- TODO: Create new GUID here -->
-      <!--<Component Id="MainExecutableComponent" Guid="{84A2E297-36A6-4E90-8382-9739614F94CE}">
-        <File Id="MainExeFile" Source="$(var.FragmentRunner.TargetPath)" KeyPath="yes" Vital="yes">
-          <Shortcut Id="MainShortcut" Directory="ProgramMenuAppFolder" Name="$(var.PRODUCTNAME)" Description="$(var.PRODUCTNAME) $(var.VERSION)" WorkingDirectory="ProgramFilesAppFolder" Icon="$(var.FragmentRunner.TargetFileName)" IconIndex="0" Advertise="yes" />
-        </File>
-      </Component>-->
-      <Directory Id="FragmentRunner.Shortcut" />
+      <Directory Id="FragmentRunner.Output" />
 
       <Directory Id="FuncPlotter" Name="Func Plotter">
-        <Directory Id="FuncPlotter.Shortcut" />
-        <Directory Id="FuncPlotter.Content" />
+        <Directory Id="FuncPlotter.Output" />
+        <Directory Id="FuncPlotter.Shortcut" Name="Funcy Plotter"/>
+
         <Directory Id="Mobzystems.CodeFragments.Output" />
+        <Directory Id="CodeFragmentTester.Output" />
         <Directory Id="CodeFragmentTester.Shortcut" />
       </Directory>
     </DirectoryRef>
 
     <!-- Contents of the Start menu folder-->
     <DirectoryRef Id="ProgramMenuAppFolder">
-      <!-- TODO: Create new GUID here -->
-      <Component Id="ProgramMenuFolderComponent" Guid="{D1D2551B-787B-48F7-BA61-35BDFD976F2A}">
+      <Component Id="ProgramMenuFolderComponent">
         <RemoveFolder Id="ProgramMenuAppFolder" On="uninstall" />
-        <RegistryValue Root="HKMU" Key="Software\[Manufacturer]\$(var.PRODUCTNAME)" Type="string" Value="" KeyPath="yes" />
+        <RegistryValue Root="HKMU" Key="Software\[Manufacturer]\Install\$(var.PRODUCTNAME)" Type="string" Value="" KeyPath="yes" />
       </Component>
-      <Directory Id="FuncPlotter.ShortcutFolder" Name="Funcy Plotter"/>
-      <Directory Id="CodeFragmentTester.ShortcutFolder" />
     </DirectoryRef>
 
     <Feature Id="Complete" Level="1">
       <!-- Main component -->
-      <ComponentGroupRef Id="FragmentRunner.Shortcut" />
+      <ComponentGroupRef Id="FragmentRunner.Output" />
 
       <!-- Dependencies -->
       <ComponentGroupRef Id="Mobzystems.CodeFragments.Output" />
 
       <!-- Extra components -->
-      <ComponentGroupRef Id="FuncPlotter.Shortcut" />
-      <ComponentGroupRef Id="CodeFragmentTester.Shortcut" />
+      <ComponentGroupRef Id="FuncPlotter.Output" />
+      <ComponentGroupRef Id="CodeFragmentTester.Output" />
 
       <!-- The start menu folder -->
       <ComponentRef Id="ProgramMenuFolderComponent" />
@@ -178,18 +191,6 @@
     <?endif?>
 
     <UIRef Id="WixUI_Common" />
-
-    <!--<Property Id="ARPCOMMENTS" Value="Acme Corporation Comments" />
-    <Property Id="ARPCONTACT" Value="Put your name in here" />
-    <Property Id="ARPPRODUCTICON" Value="MainIcon.ico" />
-    <Property Id="ARPHELPLINK" Value="Your help link" />
-    <Property Id="ARPREADME" Value="Your README link" />
-    <Property Id="ARPURLINFOABOUT" Value="Your &apos;About&apos; information" />
-    <Property Id="ARPURLUPDATEINFO" Value="Your &apos;Update&apos; URL" />
-    <Property Id="ARPHELPTELEPHONE" Value="URL where users can find your support phone number" />
-    <Property Id="ARPAUTHORIZEDCDFPREFIX" Value="URL of the update channel for the application" />
-    <Property Id="ARPSIZE" Value="3" />-->
-
 
     <!--
   <Property Id="ARPNOMODIFY" Value="0" />
