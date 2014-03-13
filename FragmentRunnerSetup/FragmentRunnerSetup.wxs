@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Change ONCE -->
+
+<!-- Product name. Used in title and Start Menu folder -->
+<?define PRODUCTNAME="Fragment Runner"?>
+<!-- Manufacturer name -->
+<?define MANUFACTURER="MOBZystems"?>
+<!-- The folder name to install to (inside ProgramFiles\Manufacturer) -->
+<?define FOLDERNAME="Fragment Runner"?>
+<!-- Fixed upgrade code for this product. Set and forget! -->
+<?define UPGRADECODE="dc8018fe-f1e4-4db8-bdbf-d474243a9fbc"?>
+
+<!-- Change ALL OF THESE, ON EVERY NEW VERSION -->
+<?define VERSION="0.9.1"?>
+<?define PRODUCTCODE="{60487F48-0E7B-44DC-8490-C342C52BA349}"?>
+
+<!-- Change at will -->
+<!--
+  Choose an install type:
+  
+  - silent: practically no UI, installation starts when the MSI is started
+  - minimal: just a welcome dialog. Nu EULA, no choice of installation folder
+-->
+<?define INSTALLTYPE="minimal"?>
+
+<!--
+  Note:
+  
+  a reference to WixNetFxExtension.dll is required to detect .NET framework versions
+  a reference to WixNUIExtension.dll is required to enable custom install types (like 'minimal')
+ 
+-->
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+  <Product Name="$(var.PRODUCTNAME) $(var.VERSION)" Id="$(var.PRODUCTCODE)" UpgradeCode="$(var.UPGRADECODE)" Language="1033" Version="$(var.VERSION)" Manufacturer="$(var.MANUFACTURER)">
+    <!-- Set Compressed to 'no' to store installation structure next to MSI file -->
+    <Package Description="DESC $(var.PRODUCTNAME) $(var.VERSION)" InstallerVersion="200" Languages="1033" Compressed="no" InstallScope="perMachine" />
+
+    <!-- Upgrade policy: no downgrades, consider x.y.z.R1 equal to x.y.z.R2 (e.g. ignore revisions) -->
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="no"/>
+    <MediaTemplate CabinetTemplate="cab{0}.cab" EmbedCab="yes"/>
+
+    <!-- Include our dependencies -->
+    <?include wxi\FuncPlotter.Shortcut.wxi?>
+    <?include wxi\FragmentRunner.Shortcut.wxi?>
+    <?include wxi\CodeFragmentTester.Shortcut.wxi?>
+    <?include wxi\Mobzystems.CodeFragments.Output.wxi?>
+
+    <!--
+    Hack to prevent all kinds of ICE warnings. 
+    All shortcuts are declared as Advertised (for per Machine installation) but are not installed as such.
+    -->
+    <Property Id="DISABLEADVTSHORTCUTS" Value="1" />
+
+    <!-- For .NET installation detection. Requires reference to WixNetFxExtension.dll -->
+    <PropertyRef Id="NETFRAMEWORK10"/>
+    <PropertyRef Id="NETFRAMEWORK11"/>
+    <PropertyRef Id="NETFRAMEWORK20"/>
+    <PropertyRef Id="NETFRAMEWORK30"/>
+    <PropertyRef Id="NETFRAMEWORK35"/>
+    <PropertyRef Id="NETFRAMEWORK40FULL"/>
+    <PropertyRef Id="NETFRAMEWORK40CLIENT"/>
+    <PropertyRef Id="NETFRAMEWORK45"/>
+
+    <!--<Condition Message="This application requires .NET Framework 2.0. Please install the .NET Framework then run this installer again.">
+      <![CDATA[Installed OR NETFRAMEWORK20]]>
+    </Condition>-->
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+
+      <!-- The physical folder structure: ProgramFiles\[Manufacturer]\[Product]-->
+
+      <Directory Id="ProgramFilesFolder">
+        <!-- Enable this element for a manufacturer folder in Program Files -->
+        <Directory Id="ProgramFilesManufacturerFolder" Name="$(var.MANUFACTURER)">
+          <Directory Id="ProgramFilesAppFolder" Name="$(var.FOLDERNAME)" />
+        </Directory>
+      </Directory>
+
+      <!-- Program (= Start) menu folder structure -->
+
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="FragmentRunner.ShortcutFolder" />
+        <!--<Directory Id="ProgramMenuManufacturerFolder" Name="$(var.MANUFACTURER)">-->
+        <Directory Id="ProgramMenuAppFolder" Name="$(var.PRODUCTNAME)" />
+        <!--</Directory>-->
+      </Directory>
+    </Directory>
+
+    <!--  Contents of the installation directory (in ProgramFiles)-->
+    <DirectoryRef Id="ProgramFilesAppFolder">
+      <!-- TODO: Create new GUID here -->
+      <!--<Component Id="MainExecutableComponent" Guid="{84A2E297-36A6-4E90-8382-9739614F94CE}">
+        <File Id="MainExeFile" Source="$(var.FragmentRunner.TargetPath)" KeyPath="yes" Vital="yes">
+          <Shortcut Id="MainShortcut" Directory="ProgramMenuAppFolder" Name="$(var.PRODUCTNAME)" Description="$(var.PRODUCTNAME) $(var.VERSION)" WorkingDirectory="ProgramFilesAppFolder" Icon="$(var.FragmentRunner.TargetFileName)" IconIndex="0" Advertise="yes" />
+        </File>
+      </Component>-->
+      <Directory Id="FragmentRunner.Shortcut" />
+
+      <Directory Id="FuncPlotter" Name="Func Plotter">
+        <Directory Id="FuncPlotter.Shortcut" />
+        <Directory Id="FuncPlotter.Content" />
+        <Directory Id="Mobzystems.CodeFragments.Output" />
+        <Directory Id="CodeFragmentTester.Shortcut" />
+      </Directory>
+    </DirectoryRef>
+
+    <!-- Contents of the Start menu folder-->
+    <DirectoryRef Id="ProgramMenuAppFolder">
+      <!-- TODO: Create new GUID here -->
+      <Component Id="ProgramMenuFolderComponent" Guid="{D1D2551B-787B-48F7-BA61-35BDFD976F2A}">
+        <RemoveFolder Id="ProgramMenuAppFolder" On="uninstall" />
+        <RegistryValue Root="HKMU" Key="Software\[Manufacturer]\$(var.PRODUCTNAME)" Type="string" Value="" KeyPath="yes" />
+      </Component>
+      <Directory Id="FuncPlotter.ShortcutFolder" Name="Funcy Plotter"/>
+      <Directory Id="CodeFragmentTester.ShortcutFolder" />
+    </DirectoryRef>
+
+    <Feature Id="Complete" Level="1">
+      <!-- Main component -->
+      <ComponentGroupRef Id="FragmentRunner.Shortcut" />
+
+      <!-- Dependencies -->
+      <ComponentGroupRef Id="Mobzystems.CodeFragments.Output" />
+
+      <!-- Extra components -->
+      <ComponentGroupRef Id="FuncPlotter.Shortcut" />
+      <ComponentGroupRef Id="CodeFragmentTester.Shortcut" />
+
+      <!-- The start menu folder -->
+      <ComponentRef Id="ProgramMenuFolderComponent" />
+    </Feature>
+
+    <!-- UI type -->
+
+    <?if $(var.INSTALLTYPE) = "silent" ?>
+
+    <!-- Silent: nothing to include - no UI!-->
+
+    <?elseif $(var.INSTALLTYPE) = "minimal"?>
+
+    <!-- Minimal: skip EULA -->
+
+    <UI Id="MinimalWithoutLicenseUI">
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+      <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+      <Property Id="WixUI_Mode" Value="Minimal" />
+
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="MsiRMFilesInUse" />
+      <DialogRef Id="PrepareDlg" />
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ResumeDlg" />
+      <DialogRef Id="UserExit" />
+
+      <DialogRef Id="WelcomeDlg" />
+
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="PrepareDlg">1</Publish>
+
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999">1</Publish>
+
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+
+      <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg">1</Publish>
+
+      <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg">1</Publish>
+
+      <Property Id="ARPNOMODIFY" Value="1" />
+    </UI>
+
+    <?endif?>
+
+    <UIRef Id="WixUI_Common" />
+
+    <!--<Property Id="ARPCOMMENTS" Value="Acme Corporation Comments" />
+    <Property Id="ARPCONTACT" Value="Put your name in here" />
+    <Property Id="ARPPRODUCTICON" Value="MainIcon.ico" />
+    <Property Id="ARPHELPLINK" Value="Your help link" />
+    <Property Id="ARPREADME" Value="Your README link" />
+    <Property Id="ARPURLINFOABOUT" Value="Your &apos;About&apos; information" />
+    <Property Id="ARPURLUPDATEINFO" Value="Your &apos;Update&apos; URL" />
+    <Property Id="ARPHELPTELEPHONE" Value="URL where users can find your support phone number" />
+    <Property Id="ARPAUTHORIZEDCDFPREFIX" Value="URL of the update channel for the application" />
+    <Property Id="ARPSIZE" Value="3" />-->
+
+
+    <!--
+  <Property Id="ARPNOMODIFY" Value="0" />
+  <Property Id="ARPNOREPAIR" Value="0" />
+  <Property Id="ARPNOREMOVE" Value="0" />
+  <Property Id="ARPSYSTEMCOMPONENT" Value="0" />
+  -->
+  </Product>
+</Wix>
