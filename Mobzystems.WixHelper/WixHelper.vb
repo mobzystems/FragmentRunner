@@ -48,16 +48,16 @@ Module WixHelper
 
     Public Shortcut As FileInfo
 
-    Protected xml As XmlDocument
-    Protected nsm As XmlNamespaceManager
+    Protected _xml As XmlDocument
+    Protected _nsm As XmlNamespaceManager
 
     Public Sub New(projectFile As String)
       ' Console.WriteLine("WixHelper: reading file " + projectFile)
 
-      xml = New XmlDocument
-      nsm = New XmlNamespaceManager(xml.NameTable)
-      nsm.AddNamespace("x", "http://schemas.microsoft.com/developer/msbuild/2003")
-      xml.Load(projectFile)
+      Me._xml = New XmlDocument
+      Me._nsm = New XmlNamespaceManager(_xml.NameTable)
+      Me._nsm.AddNamespace("x", "http://schemas.microsoft.com/developer/msbuild/2003")
+      Me._xml.Load(projectFile)
 
       Me.Filename = IO.Path.GetFullPath(projectFile)
       Me.ProjectName = IO.Path.GetFileNameWithoutExtension(projectFile)
@@ -68,7 +68,7 @@ Module WixHelper
 
       Me.OutputType = SelectText("/x:Project/x:PropertyGroup/x:OutputType")
       Me.AssemblyName = SelectText("/x:Project/x:PropertyGroup/x:AssemblyName")
-
+      ' Dim configurationNode = SelectNode("/x:Project/x:PropertyGroup[@Condition="" '$(Configuration)|$(Platform)' == '" + configuration + "' ""]")
       Dim contentNodes = SelectNodes("/x:Project/x:ItemGroup/x:Content")
       For Each contentNode As XmlElement In contentNodes
         Me.ContentFiles.Add(New FileInfo(contentNode.Attributes("Include").Value, "$(var." + ProjectName + ".ProjectDir)"))
@@ -101,13 +101,14 @@ Module WixHelper
         If hasAppConfig Then
           Me.OutputFiles.Add(New FileInfo(Me.Shortcut.Name + ".config", "$(var." + ProjectName + ".TargetDir)"))
         End If
+
       End If
 
       ' Console.WriteLine("WixHelper: file was read - " + projectFile)
     End Sub
 
     Protected Function SelectNode(query As String) As XmlNode
-      Return Me.xml.SelectSingleNode(query, Me.nsm)
+      Return Me._xml.SelectSingleNode(query, Me._nsm)
     End Function
 
     Protected Function SelectText(query As String) As String
@@ -120,7 +121,7 @@ Module WixHelper
     End Function
 
     Protected Function SelectNodes(query As String) As XmlNodeList
-      Return Me.xml.SelectNodes(query, Me.nsm)
+      Return Me._xml.SelectNodes(query, Me._nsm)
     End Function
 
     Public Function CreateComponentGroup(projectName As String, componentName As String, files As IEnumerable(Of FileInfo), shortcutFile As FileInfo) As XElement
@@ -130,7 +131,7 @@ Module WixHelper
       Next
 
       If shortcutFile IsNot Nothing Then
-        cg.Add(<ComponentRef Id=<%= projectName + "." + componentName + "Folder" %>/>)
+        cg.Add(<ComponentRef Id=<%= projectName + ".Shortcut" %>/>)
       End If
 
       Return cg
@@ -144,7 +145,7 @@ Module WixHelper
         Dim f = <File Id=<%= projectName + "." + componentName + "." + file.Id %> Source=<%= file.Source + "\" + file.Name %> KeyPath="yes"/>
         c.Add(f)
         If file Is shortcutFile Then
-          f.Add(<Shortcut Id=<%= projectName + "." + componentName + "." + file.Id %> Name=<%= projectName %> Directory=<%= projectName + "." + componentName + "Folder" %> WorkingDirectory=<%= projectName + ".Output" %> Advertise="yes" IconIndex="0" Icon=<%= file.Name %>>
+          f.Add(<Shortcut Id=<%= projectName + "." + componentName + "." + file.Id %> Name=<%= "$(var." + projectName + ".ShortcutName)" %> Description=<%= "$(var." + projectName + ".ShortcutDescription)" %> Directory=<%= projectName + ".Shortcut" %> WorkingDirectory=<%= projectName + ".Output" %> Advertise="yes" IconIndex="0" Icon=<%= file.Name %>>
                   <Icon Id=<%= file.Name %> SourceFile=<%= file.Source + "\" + file.Name %>/>
                 </Shortcut>)
         End If
@@ -159,21 +160,21 @@ Module WixHelper
       x.Root.Add(CreateDirectoryRef(name, componentName, files, If(writeShortcut, Me.Shortcut, Nothing)))
       If writeShortcut Then
         x.Root.Add(
-        <DirectoryRef Id=<%= ProjectName + "." + componentName + "Folder" %>>
-          <Component Id=<%= ProjectName + "." + componentName + "Folder" %>>
-            <RemoveFolder Id=<%= ProjectName + "." + componentName + "Folder" %> On="uninstall"/>
+        <DirectoryRef Id=<%= ProjectName + "." + "Shortcut" %>>
+          <Component Id=<%= ProjectName + "." + "Shortcut" %>>
+            <RemoveFolder Id=<%= ProjectName + "." + "Shortcut" %> On="uninstall"/>
             <RegistryValue Root="HKMU" Key=<%= "Software\[Manufacturer]\Install\$(var.PRODUCTNAME)\" + ProjectName + "." + componentName %> Type="string" Value="" KeyPath="yes"/>
           </Component>
         </DirectoryRef>)
       End If
       x.Root.Add(CreateComponentGroup(name, componentName, files, If(writeShortcut, Me.Shortcut, Nothing)))
-
       x.Save(outputFilename)
     End Sub
   End Class
 
   Function Main(args() As String) As Integer
     Dim projectFile As String = args(0)
+    'Dim configuration As String = args(1)
     Dim outputFolder As String = args(1)
 
     Console.WriteLine("WixHelper: generating dependencies for " + projectFile + " into " + outputFolder)
@@ -188,8 +189,8 @@ Module WixHelper
         If p IsNot myProject Then
           rootNode.AppendChild(includeXml.CreateProcessingInstruction("include", p.ProjectName + ".wxi"))
           p.WriteWixIncludeFile(IO.Path.Combine(outputFolder, p.ProjectName + ".Content.wxi"), p.ProjectName, "Content", p.ContentFiles)
-          p.WriteWixIncludeFile(IO.Path.Combine(outputFolder, p.ProjectName + ".Output.wxi"), p.ProjectName, "Output", p.OutputFiles)
-          p.WriteWixIncludeFile(IO.Path.Combine(outputFolder, p.ProjectName + ".Shortcut.wxi"), p.ProjectName, "Shortcut", p.OutputFiles, True)
+          Dim writeShortcut As Boolean = p.Shortcut IsNot Nothing AndAlso (p.OutputType = "WinExe" OrElse p.OutputType = "Exe")
+          p.WriteWixIncludeFile(IO.Path.Combine(outputFolder, p.ProjectName + ".Output.wxi"), p.ProjectName, "Output", p.OutputFiles, writeShortcut:=writeShortcut)
           p.WriteWixIncludeFile(IO.Path.Combine(outputFolder, p.ProjectName + ".Source.wxi"), p.ProjectName, "Source", p.SourceFiles)
         End If
       Next
