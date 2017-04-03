@@ -5,7 +5,7 @@ Simple but surprisingly powerful tool to quickly try out .NET fragments in C#, V
 <strong>Usage</strong><br>
 Simply select the language you want to use, type in your code fragment and press F5 to run it:<br>
 <br>
-<img title="Screenshot.png" alt="Screenshot.png" src="http://download-codeplex.sec.s-msft.com/Download?ProjectName=fragmentrunner&DownloadId=810222"><br>
+<img title="Screenshot.png" alt="Screenshot.png" src="Home_Screenshot.png"><br>
 <br>
 <strong>Reusable library</strong><br>
 Part of the source code is a library enabling you to create in-memory, executable assemblies. You can both capture their console-like output and the return value.</p>
@@ -13,7 +13,7 @@ Part of the source code is a library enabling you to create in-memory, executabl
 <span style="color:blue">End</span>&nbsp;<span style="color:blue">Sub</span></pre>
 <h3><font style="font-weight:bold">Example: Function Plotter</font></h3>
 <p>A Code Fragment is also used to produce the following plot in another example program: FuncPlotter.</p>
-<p><a href="http://download-codeplex.sec.s-msft.com/Download?ProjectName=fragmentrunner&DownloadId=810696"><img title="image" border="0" alt="image" src="http://download-codeplex.sec.s-msft.com/Download?ProjectName=fragmentrunner&DownloadId=810697" width="603" height="592" style="border-top:0px; border-right:0px; border-bottom:0px; padding-top:0px; padding-left:0px; border-left:0px; display:inline; padding-right:0px"></a></p>
+<p><img title="image" border="0" alt="image" src="Home_image_2.png" width="603" height="592" style="border-top:0px; border-right:0px; border-bottom:0px; padding-top:0px; padding-left:0px; border-left:0px; display:inline; padding-right:0px"></p>
 <p>The <a href="https://fragmentrunner.codeplex.com/SourceControl/latest#FuncPlotter/FuncPlotterForm.vb">
 source code</a> for this form is approx. one printed page.</p>
 </div><div class="ClearBoth"></div>
