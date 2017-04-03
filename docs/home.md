@@ -14,6 +14,6 @@ Part of the source code is a library enabling you to create in-memory, executabl
 <h3><font style="font-weight:bold">Example: Function Plotter</font></h3>
 <p>A Code Fragment is also used to produce the following plot in another example program: FuncPlotter.</p>
 <p><img title="image" border="0" alt="image" src="Home_image_2.png" width="603" height="592" style="border-top:0px; border-right:0px; border-bottom:0px; padding-top:0px; padding-left:0px; border-left:0px; display:inline; padding-right:0px"></p>
-<p>The <a href="https://fragmentrunner.codeplex.com/SourceControl/latest#FuncPlotter/FuncPlotterForm.vb">
+<p>The <a href="https://github.com/mobzystems/FragmentRunner/blob/master/FragmentRunner/FragmentEditor.vb">
 source code</a> for this form is approx. one printed page.</p>
 </div><div class="ClearBoth"></div>
